@@ -13,6 +13,7 @@ from dataset import FaceDataset
 from utils import set_global_seed, make_image_from_batches
 
 from arcface.model import Backbone
+from models.AEI_net import AEINet_generator, AEINet_discriminator
 
 
 p = argparse.ArgumentParser(description='SR training script')
@@ -23,7 +24,7 @@ p.add_argument("--num_epochs", type=int, default=1000, help='Number of training 
 p.add_argument("--display_freq", type=int, default=50, help='')
 
 p.add_argument("--dataset_path", type=str, default='./data/FFHQ_LR', help='Path to dataset directory')
-p.add_argument("--dataset_size", type=int, default=10, help='')
+p.add_argument("--dataset_size", type=int, default=1000, help='')
 p.add_argument("--batch_size", type=int, default=16, help='')
 
 args = p.parse_args()
@@ -38,6 +39,12 @@ arcface_model = Backbone(50, 0.6, 'ir_se').to(device)
 arcface_model.eval()
 arcface_model.load_state_dict(torch.load('saved_models/model_ir_se50.pth', map_location=device), strict=False)
 
+model_G = AEINet_generator(c_id=512).to(device)
+model_D = AEINet_discriminator().to(device)
+
+opt_G = optim.Adam(model_G.parameters(), lr=4e-4, betas=(0, 0.999))
+opt_D = optim.Adam(model_D.parameters(), lr=4e-4, betas=(0, 0.999))
+
 print('===> Started training. Results are in {}'.format(args.result_dir))
 total_iter = 0
 for epoch in range(args.num_epochs):
@@ -48,11 +55,12 @@ for epoch in range(args.num_epochs):
         Xs = Xs.to(device)
         Xt = Xt.to(device)
 
-        res = arcface_model(F.interpolate(Xs, [112, 112], mode='bilinear', align_corners=True))
+        z_id = arcface_model(F.interpolate(Xs, [112, 112], mode='bilinear', align_corners=True))
+        Y, attributes = model_G(Xt, z_id)
 
         # visualization of results
         if total_iter % args.display_freq == 0:
-            image = make_image_from_batches(Xs, Xt, Xs, num_images=6)
+            image = make_image_from_batches(Xs, Xt, Y, num_images=6)
             image = np.transpose(image, (1, 2, 0))
 
             cv2.imshow("Result", image)
