@@ -5,11 +5,14 @@ import time
 import numpy as np
 import torch
 from torch import optim
+import torch.nn.functional as F
 import cv2
 from tqdm import tqdm
 
 from dataset import FaceDataset
 from utils import set_global_seed, make_image_from_batches
+
+from arcface.model import Backbone
 
 
 p = argparse.ArgumentParser(description='SR training script')
@@ -29,8 +32,11 @@ set_global_seed(args.seed)
 device = torch.device(args.device)
 
 dataset = FaceDataset(args)
-trainloader = torch.utils.data.DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=8)
+trainloader = torch.utils.data.DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=0)
 
+arcface_model = Backbone(50, 0.6, 'ir_se').to(device)
+arcface_model.eval()
+arcface_model.load_state_dict(torch.load('saved_models/model_ir_se50.pth', map_location=device), strict=False)
 
 print('===> Started training. Results are in {}'.format(args.result_dir))
 total_iter = 0
@@ -39,6 +45,10 @@ for epoch in range(args.num_epochs):
     start_time = time.time()
     for iteration, data in tqdm(enumerate(trainloader), total=len(trainloader)):
         Xs, Xt, same = data
+        Xs = Xs.to(device)
+        Xt = Xt.to(device)
+
+        res = arcface_model(F.interpolate(Xs, [112, 112], mode='bilinear', align_corners=True))
 
         # visualization of results
         if total_iter % args.display_freq == 0:
