@@ -9,8 +9,7 @@ import os
 
 class FaceDataset(TensorDataset):
     def __init__(self, args):
-        self.image_paths = glob.glob(f'{args.dataset_path}/*.*g')[:args.dataset_size]
-        # self.embeds = embeds
+        self.image_paths = sorted(glob.glob(f'{args.dataset_path}/*.png'))[:args.dataset_size]
         self.transforms = transforms.Compose([
             transforms.ColorJitter(0.2, 0.2, 0.2, 0.01),
             transforms.ToTensor(),
