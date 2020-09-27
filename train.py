@@ -13,7 +13,7 @@ from dataset import FaceDataset
 from utils import set_global_seed, make_image_from_batches
 
 from arcface.model import Backbone
-from models.AEINet2 import AEINet_generator, AEINet_discriminator
+from models.AEI_net import AEINet_generator, AEINet_discriminator
 
 p = argparse.ArgumentParser(description='SR training script')
 p.add_argument("--result_dir", type=str, default='./results')
