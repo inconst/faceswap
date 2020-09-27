@@ -1,4 +1,3 @@
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -22,10 +21,12 @@ def conv4x4(in_c, out_c, norm=nn.BatchNorm2d):
         nn.LeakyReLU(0.1, inplace=True)
     )
 
+
 class deconv4x4(nn.Module):
     def __init__(self, in_c, out_c, norm=nn.BatchNorm2d):
         super(deconv4x4, self).__init__()
-        self.deconv = nn.ConvTranspose2d(in_channels=in_c, out_channels=out_c, kernel_size=4, stride=2, padding=1, bias=False)
+        self.deconv = nn.ConvTranspose2d(in_channels=in_c, out_channels=out_c, kernel_size=4, stride=2, padding=1,
+                                         bias=False)
         self.bn = norm(out_c)
         self.lrelu = nn.LeakyReLU(0.1, inplace=True)
 
@@ -149,6 +150,7 @@ class AAD_ResBlk(nn.Module):
 
         return x
 
+
 class AADGenerator(nn.Module):
     def __init__(self, c_id=256):
         super(AADGenerator, self).__init__()
@@ -214,5 +216,3 @@ class AEINet_discriminator(nn.Module):
 
     def forward(self, img):
         return self.model(img)
-
-

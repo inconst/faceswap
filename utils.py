@@ -1,4 +1,3 @@
-
 import torch
 import torchvision
 import numpy as np
@@ -9,6 +8,7 @@ def set_global_seed(seed):
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
+
 
 def get_grid_image(X):
     X = torchvision.utils.make_grid(X.detach().cpu(), nrow=X.shape[0]) * 0.5 + 0.5

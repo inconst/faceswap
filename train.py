@@ -22,7 +22,7 @@ p.add_argument("--num_epochs", type=int, default=1000, help='Number of training 
 p.add_argument("--pretrained_dir", type=str, default='',
                help='Directory to load model from (if empty then training from scratch)')
 p.add_argument("--display_freq", type=int, default=10, help='How often display training results (in iterations)')
-p.add_argument("--dataset_path", type=str, default='./data/FFHQ_128x128', help='Path to dataset directory')
+p.add_argument("--dataset_path", type=str, default='./data/thumbnails128x128', help='Path to dataset directory')
 p.add_argument("--dataset_size", type=int, default=70000, help='Number of images to take for training')
 p.add_argument("--batch_size", type=int, default=16, help='Batch size')
 args = p.parse_args()
@@ -65,6 +65,8 @@ for epoch in range(args.num_epochs):
         Xs = Xs.to(device)
         Xt = Xt.to(device)
         same_person = same_person.to(device)
+
+        # --------------
 
         with torch.no_grad():
             source_id = arcface_model(F.interpolate(Xs, [112, 112], mode='bilinear', align_corners=True))
