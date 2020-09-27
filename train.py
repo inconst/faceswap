@@ -15,20 +15,17 @@ from utils import set_global_seed, make_image_from_batches
 from arcface.model import Backbone
 from models.AEI_net import AEINet_generator, AEINet_discriminator
 
-p = argparse.ArgumentParser(description='SR training script')
-p.add_argument("--result_dir", type=str, default='./results')
-p.add_argument("--device", type=str, default='cuda')
-p.add_argument("--seed", type=int, default=0, help='')
+p = argparse.ArgumentParser(description='Face swapping AEINet training')
+p.add_argument("--device", type=str, default='cuda', help='Device used (cpu or cuda)')
+p.add_argument("--seed", type=int, default=0, help='Random seed')
 p.add_argument("--num_epochs", type=int, default=1000, help='Number of training epochs')
-p.add_argument("--pretrained_dir", type=str, default='')
-p.add_argument("--display_freq", type=int, default=10, help='')
-
+p.add_argument("--pretrained_dir", type=str, default='',
+               help='Directory to load model from (if empty then training from scratch)')
+p.add_argument("--display_freq", type=int, default=10, help='How often display training results (in iterations)')
 p.add_argument("--dataset_path", type=str, default='./data/FFHQ_128x128', help='Path to dataset directory')
-p.add_argument("--dataset_size", type=int, default=70000, help='')
-p.add_argument("--batch_size", type=int, default=16, help='')
-
+p.add_argument("--dataset_size", type=int, default=70000, help='Number of images to take for training')
+p.add_argument("--batch_size", type=int, default=16, help='Batch size')
 args = p.parse_args()
-os.makedirs(args.result_dir, exist_ok=True)
 set_global_seed(args.seed)
 device = torch.device(args.device)
 
@@ -56,7 +53,7 @@ def hinge_loss(X, positive=True):
         return torch.relu(X + 1).mean()
 
 
-print('===> Started training. Results are in {}'.format(args.result_dir))
+print('===> Started training')
 stats_writer = SummaryWriter('tensorboard_stats')
 total_iter = 0
 for epoch in range(args.num_epochs):
