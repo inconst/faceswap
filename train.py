@@ -20,6 +20,7 @@ p.add_argument("--result_dir", type=str, default='./results')
 p.add_argument("--device", type=str, default='cuda')
 p.add_argument("--seed", type=int, default=0, help='')
 p.add_argument("--num_epochs", type=int, default=1000, help='Number of training epochs')
+p.add_argument("--pretrained_dir", type=str, default='')
 p.add_argument("--display_freq", type=int, default=10, help='')
 
 p.add_argument("--dataset_path", type=str, default='./data/FFHQ_128x128', help='Path to dataset directory')
@@ -40,6 +41,9 @@ arcface_model.load_state_dict(torch.load('saved_models/model_ir_se50.pth', map_l
 
 model_G = AEINet_generator(c_id=512).to(device)
 model_D = AEINet_discriminator().to(device)
+if args.pretrained_dir:
+    model_G.load_state_dict(torch.load(os.path.join(args.pretrained_dir, 'G_latest.pth'), map_location=device))
+    model_D.load_state_dict(torch.load(os.path.join(args.pretrained_dir, 'D_latest.pth'), map_location=device))
 
 opt_G = optim.Adam(model_G.parameters(), lr=4e-4, betas=(0, 0.999))
 opt_D = optim.Adam(model_D.parameters(), lr=4e-4, betas=(0, 0.999))
@@ -85,24 +89,23 @@ for epoch in range(args.num_epochs):
                                  * same_person) / same_person.sum()
         else:
             loss_rec = torch.tensor(0.0).to(device)
-        total_loss_G = 1 * loss_adv + 10 * loss_attr + 5 * loss_id + 10 * loss_rec
+        total_loss_G = 1 * loss_adv + 10 * loss_attr + 1 * loss_id + 10 * loss_rec
 
         total_loss_G.backward()
         opt_G.step()
 
         # --------------
 
-        if total_iter % 1 == 0:
-            opt_D.zero_grad()
+        opt_D.zero_grad()
 
-            fake_output = model_D(Y.detach())
-            real_output = model_D(Xs)
-            loss_true = hinge_loss(fake_output, False)
-            loss_fake = hinge_loss(real_output, True)
-            total_loss_D = 0.5 * (loss_true + loss_fake)
+        fake_output = model_D(Y.detach())
+        real_output = model_D(Xs)
+        loss_true = hinge_loss(fake_output, False)
+        loss_fake = hinge_loss(real_output, True)
+        total_loss_D = 0.5 * (loss_true + loss_fake)
 
-            total_loss_D.backward()
-            opt_D.step()
+        total_loss_D.backward()
+        opt_D.step()
 
         # --------------
 
