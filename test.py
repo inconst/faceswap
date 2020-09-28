@@ -91,8 +91,8 @@ class App(Frame):
             print('Pick both source and target images first!!!')
             return
 
-        _, Xs = self.source_image_data
-        _, Xt = self.target_image_data
+        Xs_rgb, Xs = self.source_image_data
+        Xt_rgb, Xt = self.target_image_data
         with torch.no_grad():
             embeds = self.arcface_model(F.interpolate(Xs, (112, 112), mode='bilinear', align_corners=True))
             Yt, _ = self.model_G(Xt, embeds)
@@ -103,6 +103,21 @@ class App(Frame):
             self.result_image_TK = ImageTk.PhotoImage(PIL.Image.fromarray(Yt_rgb))
             self.result_image_label.config(image=self.result_image_TK,
                                            width=self.result_image_TK.width(), height=self.result_image_TK.height())
+
+        images = [Xs_rgb, Xt_rgb, PIL.Image.fromarray(Yt_rgb)]
+        widths, heights = zip(*(i.size for i in images))
+
+        total_width = sum(widths)
+        max_height = max(heights)
+
+        new_im = Image.new('RGB', (total_width, max_height))
+
+        x_offset = 0
+        for im in images:
+            new_im.paste(im, (x_offset, 0))
+            x_offset += im.size[0]
+
+        new_im.save('test_result.jpg')
 
 
 if __name__ == "__main__":

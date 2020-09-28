@@ -7,6 +7,14 @@ This repo is inspired by [taotaonice/FaceShifter](https://github.com/taotaonice/
 uses code from [TreB1eN/InsightFace_Pytorch](https://github.com/TreB1eN/InsightFace_Pytorch) 
 (an implementation of [arcface](https://arxiv.org/abs/1801.07698) paper)
 
+![Test1](demo_images/test1.jpg)
+
+![Test2](demo_images/test2.jpg)
+
+![Test3](demo_images/test3.jpg)
+
+![Test4](demo_images/test4.jpg)
+
 ------
 
 ## Prerequisites
