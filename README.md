@@ -24,7 +24,9 @@ pip install opencv-python tqdm tensorboardX
 ## Running pretrained model
 
 1. Download arcface model (`model_ir_se_50.pth`) and pretrained weights of our 
-model (`G_latest.pth` and `D_latest.pth`) from [Google Drive]() and place them in `saved_models` folder
+model (`G_latest.pth` and `D_latest.pth`) 
+from [Google Drive](https://drive.google.com/drive/folders/10FDMU0tV5zn39nJ73j6_QJhJ7odi1Mz5?usp=sharing) 
+and place them in `saved_models` folder
 
 2. Run test script:
     ```
@@ -38,7 +40,9 @@ model (`G_latest.pth` and `D_latest.pth`) from [Google Drive]() and place them i
 ## Training model from scratch
 
 
-1. Download arcface model (`model_ir_se_50.pth`) from [Google Drive]() and place it in `saved_models` folder
+1. Download arcface model (`model_ir_se_50.pth`) 
+from [Google Drive](https://drive.google.com/drive/folders/10FDMU0tV5zn39nJ73j6_QJhJ7odi1Mz5?usp=sharing) 
+and place it in `saved_models` folder
 
 2. [FFHQ dataset](https://github.com/NVlabs/ffhq-dataset) (70000 face images) is used for training. 
 You should download `thumbnails128x128.zip` (~2GB) from 
