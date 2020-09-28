@@ -42,7 +42,7 @@ and place them in `saved_models` folder
 
 1. Download arcface model (`model_ir_se_50.pth`) 
 from [Google Drive](https://drive.google.com/drive/folders/10FDMU0tV5zn39nJ73j6_QJhJ7odi1Mz5?usp=sharing) 
-and place it in `saved_models` folder
+and place it in `saved_models` folder (if you haven't done it already)
 
 2. [FFHQ dataset](https://github.com/NVlabs/ffhq-dataset) (70000 face images) is used for training. 
 You should download `thumbnails128x128.zip` (~2GB) from 
